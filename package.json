@@ -1,21 +1,21 @@
 {
-  "name": "my-app",
-  "version": "0.1.0",
+  "name": "my-app",  // Назва вашого проекту
+  "version": "0.1.0",  // Версія вашого проекту
   "private": true,
+  "homepage": "https://<ваше_користувацьке_ім'я>.github.io/<назва_репозиторію>",  // URL GitHub Pages
   "dependencies": {
-    "@testing-library/jest-dom": "^5.17.0",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-scripts": "5.0.1",
-    "web-vitals": "^2.1.4"
+    "react": "^18.0.0",  // Залежності React
+    "react-dom": "^18.0.0",
+    "react-scripts": "5.0.0",
+    "gh-pages": "^5.0.0"  // Залежність для деплою на GitHub Pages
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "start": "react-scripts start",  // Запуск локального сервера
+    "build": "react-scripts build",  // Збірка проекту
+    "test": "react-scripts test",  // Запуск тестів
+    "eject": "react-scripts eject",  // Вийти з конфігурації create-react-app
+    "predeploy": "npm run build",  // Підготовка до деплою (збірка проекту)
+    "deploy": "gh-pages -d build"  // Команда для деплою на GitHub Pages
   },
   "eslintConfig": {
     "extends": [
