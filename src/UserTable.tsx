@@ -60,7 +60,7 @@ const UserTable: React.FC = () => {
       />
 
       {loading ? (
-        <div className="loader">Loading...</div>
+        <div className="loader"></div>
       ) : (
         <table className="user-table">
           <thead>
@@ -83,7 +83,7 @@ const UserTable: React.FC = () => {
               ))
             ) : (
               <tr>
-                <td colSpan={4} className="no-results">Нічого не знайдено</td>
+                <td colSpan={4} className="no-results">Nothing found</td>
               </tr>
             )}
           </tbody>
