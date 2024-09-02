@@ -70,3 +70,63 @@ input[type="text"]:focus {
   outline: none;
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
+/* Лоадер */
+.loader {
+  font-size: 24px;
+  text-align: center;
+  margin-top: 20px;
+  color: #007bff;
+}
+
+.loader:after {
+  content: ' ';
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  margin-left: 8px;
+  border-radius: 50%;
+  border: 3px solid #007bff;
+  border-color: #007bff transparent #007bff transparent;
+  animation: loader-spin 1.2s linear infinite;
+}
+
+@keyframes loader-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+/* Повідомлення "Нічого не знайдено" */
+.no-results {
+  text-align: center;
+  font-size: 18px;
+  color: #999;
+  padding: 20px;
+}
+.table-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 500px; /* Встановлення мінімальної ширини для запобігання стрибків */
+  margin: 20px auto;
+  padding: 10px;
+}
+
+/* Таблиця */
+.user-table {
+  width: 100%;
+  max-width: 800px; /* Максимальна ширина таблиці */
+  border-collapse: collapse;
+  margin-top: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+}
+
+th, td {
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+

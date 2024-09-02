@@ -1,75 +1,94 @@
-import React from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from './store';
-import { filterUsers } from './userSlice';
-import { User } from './userTypes'; // Убедитесь, что путь корректный
+import { fetchUsers, filterUsers } from './userSlice';
+import { debounce } from 'lodash';
+import { User } from './userTypes';
+
 
 const UserTable: React.FC = () => {
   const users = useSelector((state: RootState) => state.users.filteredUsers);
+  const loading = useSelector((state: RootState) => state.users.loading);
   const dispatch = useDispatch();
 
-  const handleFilter = (key: keyof User, value: string) => {
-    dispatch(filterUsers({ key, value }));
-  };
+  // Окремі стани для кожного поля введення
+  const [nameSearch, setNameSearch] = useState('');
+  const [usernameSearch, setUsernameSearch] = useState('');
+  const [emailSearch, setEmailSearch] = useState('');
+  const [phoneSearch, setPhoneSearch] = useState('');
 
-  const handleNameFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
-    handleFilter('name', e.target.value);
-  };
+  useEffect(() => {
+    dispatch(fetchUsers());
+  }, [dispatch]);
 
-  const handleUsernameFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
-    handleFilter('username', e.target.value);
-  };
+  const debouncedFilter = useMemo(() =>
+    debounce((key: keyof User, value: string) => {
+      dispatch(filterUsers({ key, value }));
+    }, 300), [dispatch]
+  );
 
-  const handleEmailFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
-    handleFilter('email', e.target.value);
-  };
-
-  const handlePhoneFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
-    handleFilter('phone', e.target.value);
+  const handleFilter = (key: keyof User, value: string, setValue: React.Dispatch<React.SetStateAction<string>>) => {
+    setValue(value); // Оновлюємо локальний стан для відображення у відповідному полі вводу
+    debouncedFilter(key, value); // Викликаємо debounce функцію
   };
 
   return (
-    <div>
+    <div className="table-container">
       <input
         type="text"
         placeholder="Search by name"
-        onChange={handleNameFilter}
+        value={nameSearch}
+        onChange={(e) => handleFilter('name', e.target.value, setNameSearch)}
       />
       <input
         type="text"
         placeholder="Search by username"
-        onChange={handleUsernameFilter}
+        value={usernameSearch}
+        onChange={(e) => handleFilter('username', e.target.value, setUsernameSearch)}
       />
       <input
         type="text"
         placeholder="Search by email"
-        onChange={handleEmailFilter}
+        value={emailSearch}
+        onChange={(e) => handleFilter('email', e.target.value, setEmailSearch)}
       />
       <input
         type="text"
         placeholder="Search by phone"
-        onChange={handlePhoneFilter}
+        value={phoneSearch}
+        onChange={(e) => handleFilter('phone', e.target.value, setPhoneSearch)}
       />
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Username</th>
-            <th>Email</th>
-            <th>Phone</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map((user) => (
-            <tr key={user.id}>
-              <td>{user.name}</td>
-              <td>{user.username}</td>
-              <td>{user.email}</td>
-              <td>{user.phone}</td>
+
+      {loading ? (
+        <div className="loader">Loading...</div>
+      ) : (
+        <table className="user-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Username</th>
+              <th>Email</th>
+              <th>Phone</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {users.length > 0 ? (
+              users.map((user) => (
+                <tr key={user.id}>
+                  <td>{user.name}</td>
+                  <td>{user.username}</td>
+                  <td>{user.email}</td>
+                  <td>{user.phone}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={4} className="no-results">Нічого не знайдено</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 };
