@@ -5,7 +5,6 @@ import { fetchUsers, filterUsers } from './userSlice';
 import { debounce } from 'lodash';
 import { User } from './userTypes';
 
-
 const UserTable: React.FC = () => {
   const users = useSelector((state: RootState) => state.users.filteredUsers);
   const loading = useSelector((state: RootState) => state.users.loading);
@@ -24,12 +23,14 @@ const UserTable: React.FC = () => {
   const debouncedFilter = useMemo(() =>
     debounce((key: keyof User, value: string) => {
       dispatch(filterUsers({ key, value }));
+      dispatch({ type: 'users/setLoading', payload: false });
     }, 300), [dispatch]
   );
 
   const handleFilter = (key: keyof User, value: string, setValue: React.Dispatch<React.SetStateAction<string>>) => {
-    setValue(value); // Оновлюємо локальний стан для відображення у відповідному полі вводу
-    debouncedFilter(key, value); // Викликаємо debounce функцію
+    setValue(value);
+    dispatch({ type: 'users/setLoading', payload: true });
+    debouncedFilter(key, value);
   };
 
   return (
@@ -62,35 +63,41 @@ const UserTable: React.FC = () => {
       {loading ? (
         <div className="loader"></div>
       ) : (
-        <table className="user-table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Username</th>
-              <th>Email</th>
-              <th>Phone</th>
-            </tr>
-          </thead>
-          <tbody>
+        <>
+          {/* Плашка з кількістю знайдених записів */}
+          <div className="results-info">
             {users.length > 0 ? (
-              users.map((user) => (
+              <span>{`Знайдено записів: ${users.length}`}</span>
+            ) : (
+              <span>Нічого не знайдено</span>
+            )}
+          </div>
+
+          <table className="user-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Phone</th>
+              </tr>
+            </thead>
+            <tbody>
+              {users.map((user) => (
                 <tr key={user.id}>
                   <td>{user.name}</td>
                   <td>{user.username}</td>
                   <td>{user.email}</td>
                   <td>{user.phone}</td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={4} className="no-results">Nothing found</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+              ))}
+            </tbody>
+          </table>
+        </>
       )}
     </div>
   );
 };
 
 export default UserTable;
+
